@@ -1,7 +1,7 @@
-youORMe
+stORM
 =======
 
-**youORMe** is a mini-framework for rapid development of database access. It is bult on PDO, and uses a simple Object-Oriented architecture to enable developers to quickly create classes that will access single database records or collections of such records.
+**stORM** is a mini-framework for rapid development of database access. It is bult on PDO, and uses a simple Object-Oriented architecture to enable developers to quickly create classes that will access single database records or collections of such records.
 
 The `Database` class itself is not the best way to do things, but it accomplishes the task.
 
