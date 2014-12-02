@@ -21,6 +21,8 @@ abstract class DBRecord
 	
 	public function loadByAttributes($attributes = array())
 	{
+		$success = false;
+
 		if (count($attributes) == 0)
 		{
 			$attributes = $this->attributes;
@@ -55,26 +57,27 @@ abstract class DBRecord
 					$this->result = $row;
 					$this->setAttributes($row);
 					$this->dirty = false;
-					return true;
+					$success = true;
 				}
 				else
 				{
-					return false;
+					$success = false;
 				}
 			}
 			else
 			{
 				$this->error = $select->errorInfo();
-				return false;
+				$success = false;
 			}
+
+			$database->killInterface();
 		}
 		
-		return false;
+		return $success;
 	}
 	
 	public function setAttribute($name, $value)
 	{
-		$this->attributs = array();
 		if (in_array($name, $this->columns))
 		{
 			$this->attributes[$name] = $value;
@@ -92,6 +95,8 @@ abstract class DBRecord
 	
 	public function save()
 	{
+		$success = true;
+
 		if ($this->dirty)
 		{
 			$database = new Database();
@@ -125,10 +130,11 @@ abstract class DBRecord
 				if ($update->execute())
 				{
 					$this->dirty = false;
-					return true;
+					$success = true;;
 				}
 				else
 				{
+					$success = false;
 					$this->error = $update->errorInfo();
 				}
 			}
@@ -147,23 +153,27 @@ abstract class DBRecord
 
 				if ($insert->execute())
 				{
+					$this->setAttribute($this->IDColumn, $db->lastInsertId());;
 					$this->dirty = false;
-					return true;
+					$success = true;
 				}
 				else
 				{
 					$this->error = $insert->errorInfo();
+					$success = false;
 				}
 			}
 			
-			return false;
+			$database->killInterface();
 		}
 		
-		return true;
+		return $success;
 	}
 	
 	public function delete()
 	{
+		$success = false;
+
 		if (isset($this->attributes[$this->IDColumn]))
 		{
 			$database = new Database();
@@ -172,11 +182,13 @@ abstract class DBRecord
 			
 			if ($delete->execute())
 			{
-				return true;
+				$success = true;
 			}
+
+			$database->killInterface();
 		}
 		
-		return false;
+		return $success;
 	}
 	
 	public function getAttribute($name)
@@ -226,7 +238,7 @@ abstract class DBRecord
 			{	
 				if(!preg_match($this->required[$key]['test'], $value))
 				{
-					$errors[] = $this->required[$key]['error'].' '.$this->required[$key]['test'].' '.$value;
+					$errors[] = $this->required[$key]['error'];
 				}
 			}
 		}

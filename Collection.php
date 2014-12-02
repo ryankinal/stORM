@@ -66,19 +66,25 @@ abstract class Collection
 		
 		if (isset($this->offset))
 		{
-			$select->bindValue(':offset', $this->offset, PDO::PARAM_INT);
+			$select->bindValue(':offset', $this->offset * $this->limit, PDO::PARAM_INT);
 		}
 		
 		foreach ($attributes as $column => $value)
 		{
 			$select->bindValue(':'.$column, $value);
 		}
-		
+
 		if ($select->execute())
 		{
+			$database->killInterface();
 			return $select->fetchAll(PDO::FETCH_ASSOC);
 		}
+		else
+		{
+			// error?
+		}
 		
+		$database->killInterface();
 		return array();
 	}
 	
@@ -87,14 +93,9 @@ abstract class Collection
 		return $this->elements;
 	}
 	
-	public function orderBy($column)
+	public function orderBy($column = false)
 	{
-		$parts = explode(' ', $column);
-		
-		if (in_array($parts[0], $this->reference->getColumns())
-			&& (count($parts) === 1
-				|| strtolower($parts[1]) === 'asc' 
-				|| strtolower($parts[1]) === 'desc'))
+		if ($column)
 		{
 			$this->orderBy = ' ORDER BY '.$column;
 		}
@@ -111,12 +112,22 @@ abstract class Collection
 			$page--;
 		}
 	
-		$this->offset = $page * $this->limit;
+		$this->offset = $page;
 	}
 	
 	public function perPage($perPage)
 	{
 		$this->limit = $perPage;
+	}
+
+	public function limit($limit)
+	{
+		$this->limit = $limit;
+	}
+
+	public function offset($offset)
+	{
+		$this->offset = $offset;
 	}
 	
 	public function getJSON()
