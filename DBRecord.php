@@ -85,6 +85,11 @@ abstract class DBRecord
 				case 'integer':
 					$value = intval($value);
 					break;
+				case 'decimal':
+				case 'dec':
+				case 'float':
+					$value = floatval($value);
+					break;
 				case 'boolean':
 				case 'bool':
 					$value = intval($value) ? true : false;
