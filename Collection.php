@@ -14,7 +14,7 @@ abstract class Collection
 	public function __construct($reference)
 	{
 		$this->table = $reference->getTable();
-		$this->columns = $reference->getColumns();
+		$this->columns = array_keys($reference->getColumns());
 		$this->reference = $reference;
 	}
 	
