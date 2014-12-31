@@ -78,8 +78,24 @@ abstract class DBRecord
 	
 	public function setAttribute($name, $value)
 	{
-		if (in_array($name, $this->columns))
+		if (isset($this->attributes[$name]))
 		{
+			switch ($this->attributes[$name]) {
+				case 'int':
+				case 'integer':
+					$value = intval($value);
+					break;
+				case 'boolean':
+				case 'bool':
+					$value = intval($value) ? true : false;
+					break;
+				case 'date':
+					$value = (new Date($value)).getTimestamp();
+				case 'string':
+				default:
+					break;
+			}
+			
 			$this->attributes[$name] = $value;
 			$this->dirty = true;
 		}
