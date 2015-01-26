@@ -1,8 +1,6 @@
 <?php
 namespace stORM;
 
-include_once('Database.php');
-
 abstract class DBRecord
 {
 	protected $dirty;
