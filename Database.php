@@ -1,4 +1,6 @@
 <?php
+namespace stORM;
+
 include_once('config.php');
 
 class DataBase

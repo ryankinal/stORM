@@ -1,6 +1,8 @@
 <?php
 include_once('Database.php');
 
+namespace stORM;
+
 abstract class Collection
 {
 	protected $table;

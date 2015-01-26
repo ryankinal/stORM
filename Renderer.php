@@ -1,4 +1,6 @@
 <?php
+namespace stORM;
+
 include('lib/smarty/Smarty.class.php');
 
 class Renderer
