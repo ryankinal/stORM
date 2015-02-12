@@ -39,7 +39,7 @@ abstract class DBRecord
 				$wheres[] = $column.' = :'.$column;
 			}
 			
-			$select = $db->prepare('SELECT '.implode(',', $this->columns).' FROM '.$this->table.' WHERE '.implode(' AND ', $wheres));
+			$select = $db->prepare('SELECT '.implode(',', array_keys($this->columns)).' FROM '.$this->table.' WHERE '.implode(' AND ', $wheres));
 			
 			foreach ($attributes as $column => $value)
 			{
@@ -50,7 +50,7 @@ abstract class DBRecord
 			
 			if ($select->execute())
 			{
-				$row = $select->fetch(PDO::FETCH_ASSOC);
+				$row = $select->fetch(\PDO::FETCH_ASSOC);
 				
 				if ($row && count($row) > 0)
 				{
@@ -78,9 +78,9 @@ abstract class DBRecord
 	
 	public function setAttribute($name, $value)
 	{
-		if (isset($this->attributes[$name]))
+		if (isset($this->columns[$name]))
 		{
-			switch ($this->attributes[$name]) {
+			switch ($this->columns[$name]) {
 				case 'int':
 				case 'integer':
 					$value = intval($value);
@@ -95,7 +95,8 @@ abstract class DBRecord
 					$value = intval($value) ? true : false;
 					break;
 				case 'date':
-					$value = (new Date($value)).getTimestamp();
+					$d = new \DateTime($value);
+					$value = $d->getTimeStamp();
 				case 'string':
 				default:
 					break;
