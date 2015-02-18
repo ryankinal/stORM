@@ -95,8 +95,12 @@ abstract class DBRecord
 					$value = intval($value) ? true : false;
 					break;
 				case 'date':
-					$d = new \DateTime($value);
-					$value = $d->getTimeStamp();
+					if (!is_int($value))
+					{
+						$d = new \DateTime($value);
+						$value = $d->getTimeStamp();
+					}
+					break;
 				case 'string':
 				default:
 					break;
