@@ -239,7 +239,7 @@ abstract class DBRecord
 	
 	public function getColumns()
 	{
-		return $this->columns;
+		return array_keys($this->columns);
 	}
 	
 	public function getJSON()
