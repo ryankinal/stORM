@@ -10,6 +10,7 @@ abstract class Collection
 	protected $orderBy = '';
 	protected $offset;
 	protected $limit;
+	protected $lastSQL;
 	
 	public function __construct($reference)
 	{
@@ -61,12 +62,12 @@ abstract class Collection
 		
 		if (isset($this->limit))
 		{
-			$select->bindValue(':limit', $this->limit, PDO::PARAM_INT);
+			$select->bindValue(':limit', $this->limit, \PDO::PARAM_INT);
 		}
 		
 		if (isset($this->offset))
 		{
-			$select->bindValue(':offset', $this->offset * $this->limit, PDO::PARAM_INT);
+			$select->bindValue(':offset', $this->offset * $this->limit, \PDO::PARAM_INT);
 		}
 		
 		foreach ($attributes as $column => $value)
@@ -74,10 +75,12 @@ abstract class Collection
 			$select->bindValue(':'.$column, $value);
 		}
 
+		$this->lastSQL = $statement;
+
 		if ($select->execute())
 		{
 			$database->killInterface();
-			return $select->fetchAll(PDO::FETCH_ASSOC);
+			return $select->fetchAll(\PDO::FETCH_ASSOC);
 		}
 		else
 		{
@@ -86,6 +89,11 @@ abstract class Collection
 		
 		$database->killInterface();
 		return array();
+	}
+
+	public function getLastSQL()
+	{
+		return $this->lastSQL;
 	}
 	
 	public function getElements()
